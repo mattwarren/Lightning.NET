@@ -1,6 +1,8 @@
-﻿using System;
+﻿using LightningDB.Native;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace LightningDB.Tryout
 {
@@ -77,12 +79,24 @@ namespace LightningDB.Tryout
             using (var tx = env.BeginTransaction())
             using (var db = tx.OpenDatabase("test"))
             {
-                tx.Get(db, BitConverter.GetBytes(1));
+                tx.Get(db, BitConverter.GetBytes(int.MinValue));
+                ValueStructure currentKey = default(ValueStructure);
+                ValueStructure currentValue = default(ValueStructure);
                 using (var cursor = tx.CreateCursor(db))
                 {
                     while (cursor.MoveNext())
                     {
-                        var current = cursor.Current;
+                        //var current = cursor.Current;
+                        cursor.GetCurrent(out currentKey, out currentValue);
+                        unsafe
+                        {
+                            var keyData = *((int*)(currentKey.data.ToPointer()));
+                            int valueLengthSize;
+                            var ptr = (byte*)currentValue.data.ToPointer();
+                            var length = Read7BitEncodedInt(ptr, out valueLengthSize);
+                            var text = new string((sbyte*)(ptr + valueLengthSize), 0, length, Encoding.UTF8);
+                            //Console.WriteLine("{{ Key: {0:N0}, Value: \"{1}\" }}", keyData, text);
+                        }
                         readCounter++;
                     }
                 }
@@ -92,6 +106,78 @@ namespace LightningDB.Tryout
                               readTimer.Elapsed.TotalMilliseconds, readTimer.Elapsed, readCounter,
                               readCounter / readTimer.Elapsed.TotalMilliseconds * 1000.0);
             Console.WriteLine();
+        }
+
+        private static byte [] GetBinaryEncodedString(string text)
+        {
+            // find a way of not having to create the temp byte [] ("textAsBytes")
+            byte[] textAsBytes = Encoding.UTF8.GetBytes(text);
+            var encodedDataSize = SizeOf7BitEncodedInt(textAsBytes.Length);
+            var encodedData = new byte[encodedDataSize];
+            unsafe
+            {
+                fixed (byte* arrayPtr = encodedData)
+                {
+                    Write7BitEncodedInt(arrayPtr, textAsBytes.Length);
+                }
+            }
+            var totalData = new byte[encodedDataSize + textAsBytes.Length];
+            encodedData.CopyTo(totalData, 0);
+            textAsBytes.CopyTo(totalData, encodedDataSize);
+
+            return totalData;
+        }
+
+        private static byte SizeOf7BitEncodedInt(int value)
+        {
+            byte size = 1;
+            var v = (uint)value;
+            while (v >= 0x80)
+            {
+                size++;
+                v >>= 7;
+            }
+
+            return size;
+        }
+
+        private unsafe static void Write7BitEncodedInt(byte* ptr, int value)
+        {
+            // Write out an int 7 bits at a time.  The high bit of the byte,
+            // when on, tells reader to continue reading more bytes.
+            var v = (uint)value;   // support negative numbers
+            while (v >= 0x80)
+            {
+                *ptr = (byte)(v | 0x80);
+                ptr++;
+                v >>= 7;
+            }
+            *ptr = (byte)(v);
+        }
+
+        private unsafe static int Read7BitEncodedInt(byte* ptr, out int size)
+        {
+            size = 0;
+            // Read out an Int32 7 bits at a time.  The high bit
+            // of the byte when on means to continue reading more bytes.
+            int value = 0;
+            int shift = 0;
+            byte b;
+            do
+            {
+                // Check for a corrupted stream.  Read a max of 5 bytes.
+                if (shift == 5 * 7)  // 5 bytes max per Int32, shift += 7
+                    throw new InvalidDataException("Invalid 7bit shifted value, used more than 5 bytes");
+
+                // ReadByte handles end of stream cases for us.
+                b = *ptr;
+                ptr++;
+                size++;
+                value |= (b & 0x7F) << shift;
+                shift += 7;
+            } while ((b & 0x80) != 0);
+
+            return value;
         }
 
         private static string CreateNewDirectoryForTest()

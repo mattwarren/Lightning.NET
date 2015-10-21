@@ -190,6 +190,11 @@ namespace LightningDB
             return Current;
         }
 
+        public void GetCurrent(out ValueStructure currentKeyStructure, out ValueStructure currentValueStructure)
+        {
+            Get(CursorOperation.GetCurrent, out currentKeyStructure, out currentValueStructure);
+        }
+
         /// <summary>
         /// Position at next data item
         /// </summary>
@@ -260,6 +265,15 @@ namespace LightningDB
             _currentValueStructure = default(ValueStructure);
             
             var found = mdb_cursor_get(_handle, out _currentKeyStructure, out _currentValueStructure, operation) == 0;
+            if (found)
+                _getCurrent = _currentDefault;
+
+            return found;
+        }
+
+        private bool Get(CursorOperation operation, out ValueStructure currentKeyStructure, out ValueStructure currentValueStructure)
+        {
+            var found = mdb_cursor_get(_handle, out currentKeyStructure, out currentValueStructure, operation) == 0;
             if (found)
                 _getCurrent = _currentDefault;
 
