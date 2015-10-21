@@ -40,7 +40,6 @@ namespace LightningDB.Tryout
             //var numItemsToWrite = 1 * 1000 * 1000; // 1 million
             //var numItemsToWrite = 10 * 1000 * 1000; // 10 million
             var randon = new Random(1773);
-            var randomKey = new byte[sizeof(int)];
             Console.WriteLine("Using {0} keys", useRandomKeys ? "RANDOM" : "SEQUENTIAL");
 
             var writeTimer = Stopwatch.StartNew();
@@ -52,15 +51,14 @@ namespace LightningDB.Tryout
             {
                 for (var i = 0; i < numItemsToWrite; ++i)
                 {
+                    var key = i;
                     if (useRandomKeys)
-                    {
-                        randon.NextBytes(randomKey);
-                        tx.Put(db, randomKey, BitConverter.GetBytes(i));
-                    }
-                    else
-                    {
-                        tx.Put(db, BitConverter.GetBytes(i), BitConverter.GetBytes(i));
-                    }
+                        key = randon.Next();
+
+                    //tx.Put(db, BitConverter.GetBytes(i), BitConverter.GetBytes(i));
+                    var text = "Some Text plus: 'Key' = " + key.ToString("N0"); // + " " + new String('c', 1000);
+                    var data = GetBinaryEncodedString(text);
+                    tx.Put(db, BitConverter.GetBytes(key), data);
                 }
                 tx.Commit();
                 var stats = tx.GetStats(db);
@@ -70,7 +68,7 @@ namespace LightningDB.Tryout
                                   stats.ms_branch_pages.ToInt64(), stats.ms_leaf_pages.ToInt64(), stats.ms_overflow_pages.ToInt64());
             }
             writeTimer.Stop();
-            Console.WriteLine("Took {0,10:N2} ms ({1}) to WRITE {2:N0} values ({3,10:N0} WRITES/sec)",
+            Console.WriteLine("Took {0,10:N2} ms ({1}) to WRITE {2,9:N0} values ({3,10:N0} WRITES/sec)",
                               writeTimer.Elapsed.TotalMilliseconds, writeTimer.Elapsed, numItemsToWrite,
                               numItemsToWrite / writeTimer.Elapsed.TotalMilliseconds * 1000.0);
 
@@ -90,7 +88,7 @@ namespace LightningDB.Tryout
                 }
             }
             readTimer.Stop();
-            Console.WriteLine("Took {0,10:N2} ms ({1}) to READ  {2:N0} values ({3,10:N0}  READS/sec)",
+            Console.WriteLine("Took {0,10:N2} ms ({1}) to READ  {2,9:N0} values ({3,10:N0}  READS/sec)",
                               readTimer.Elapsed.TotalMilliseconds, readTimer.Elapsed, readCounter,
                               readCounter / readTimer.Elapsed.TotalMilliseconds * 1000.0);
             Console.WriteLine();
