@@ -63,11 +63,16 @@ namespace LightningDB.Tryout
                     }
                 }
                 tx.Commit();
+                var stats = tx.GetStats(db);
+                Console.WriteLine("Stats\n  # Entries: {0:N0}\n  Depth: {1}\n  Page Size: {2}",
+                                  stats.ms_entries.ToInt64(), stats.ms_depth, stats.ms_psize);
+                Console.WriteLine("  Branch Pages: {0:N0}\n  Leaf Pages: {1}\n  Overflow Pages: {2}",
+                                  stats.ms_branch_pages.ToInt64(), stats.ms_leaf_pages.ToInt64(), stats.ms_overflow_pages.ToInt64());
             }
             writeTimer.Stop();
-            Console.WriteLine("Took {0,10:N2} ms ({1}) to WRITE {2:N0} values ({3,8:N2} WRITES/msec)",
+            Console.WriteLine("Took {0,10:N2} ms ({1}) to WRITE {2:N0} values ({3,10:N0} WRITES/sec)",
                               writeTimer.Elapsed.TotalMilliseconds, writeTimer.Elapsed, numItemsToWrite,
-                              numItemsToWrite / writeTimer.Elapsed.TotalMilliseconds);
+                              numItemsToWrite / writeTimer.Elapsed.TotalMilliseconds * 1000.0);
 
             var readTimer = Stopwatch.StartNew();
             var readCounter = 0;
@@ -85,9 +90,9 @@ namespace LightningDB.Tryout
                 }
             }
             readTimer.Stop();
-            Console.WriteLine("Took {0,10:N2} ms ({1}) to READ  {2:N0} values ({3,8:N2}  READS/msec)",
+            Console.WriteLine("Took {0,10:N2} ms ({1}) to READ  {2:N0} values ({3,10:N0}  READS/sec)",
                               readTimer.Elapsed.TotalMilliseconds, readTimer.Elapsed, readCounter,
-                              readCounter / readTimer.Elapsed.TotalMilliseconds);
+                              readCounter / readTimer.Elapsed.TotalMilliseconds * 1000.0);
             Console.WriteLine();
         }
 
@@ -98,6 +103,7 @@ namespace LightningDB.Tryout
             //var path = Path.Combine(Directory.GetParent(testProjectDir).Parent.FullName, "TestDb", guid);
             var path = Path.Combine(testProjectDir, "TestDb", guid);
             //Console.WriteLine("Creating folder: {0}\n{1}", guid, path);
+            Console.WriteLine("Creating folder: {0}", guid);
             Directory.CreateDirectory(path);
             return path;
         }
