@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LightningDB</RootNamespace>
+    <AssemblyName>LightningDB</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CursorDeleteOption.cs" />
+    <Compile Include="CursorOperation.cs" />
+    <Compile Include="CursorPutOptions.cs" />
+    <Compile Include="DatabaseConfiguration.cs" />
+    <Compile Include="DatabaseOpenFlags.cs" />
+    <Compile Include="EnvironmentConfiguration.cs" />
+    <Compile Include="EnvironmentCopyFlags.cs" />
+    <Compile Include="EnvironmentOpenFlags.cs" />
+    <Compile Include="HelperExtensions.cs" />
+    <Compile Include="LightningCursor.cs" />
+    <Compile Include="LightningDatabase.cs" />
+    <Compile Include="LightningEnvironment.cs" />
+    <Compile Include="LightningException.cs" />
+    <Compile Include="LightningTransaction.cs" />
+    <Compile Include="LightningTransactionState.cs" />
+    <Compile Include="LightningVersionInfo.cs" />
+    <Compile Include="Native\CompareFunction.cs" />
+    <Compile Include="Native\Lmdb.cs" />
+    <Compile Include="Native\LmdbMethods.cs" />
+    <Compile Include="Native\MarshalMultipleValueStructure.cs" />
+    <Compile Include="Native\MarshalValueStructure.cs" />
+    <Compile Include="Native\MDBEnvInfo.cs" />
+    <Compile Include="Native\MDBStat.cs" />
+    <Compile Include="Native\PlatformApis.cs" />
+    <Compile Include="Native\UnixNativeBinder.cs" />
+    <Compile Include="Native\ValueStructure.cs" />
+    <Compile Include="Native\WindowsNativeBinder.cs" />
+    <Compile Include="PutOptions.cs" />
+    <Compile Include="TransactionBeginFlags.cs" />
+    <Compile Include="UnixAccessMode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="content\liblmdb.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="content\lmdb32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="content\lmdb64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

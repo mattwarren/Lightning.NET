@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightningDB", "src\LightningDB\LightningDB.csproj", "{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightningDB.Tests", "tests\LightningDB.Tests\LightningDB.Tests.csproj", "{6CA996AB-F676-482C-A689-4E709161CBF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D1E7EB2-4C05-4EEB-8729-54783FC5DD8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CA996AB-F676-482C-A689-4E709161CBF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CA996AB-F676-482C-A689-4E709161CBF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CA996AB-F676-482C-A689-4E709161CBF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CA996AB-F676-482C-A689-4E709161CBF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
