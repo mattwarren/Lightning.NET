@@ -285,6 +285,14 @@ namespace LightningDB
 
             return stat.ms_entries.ToInt64();
         }
+        public MDBStat GetStats(LightningDatabase db)
+        {
+            MDBStat stat;
+            mdb_stat(_handle, db.Handle(), out stat);
+
+            return stat;
+        }
+
 
         /// <summary>
         /// Environment in which the transaction was opened.
