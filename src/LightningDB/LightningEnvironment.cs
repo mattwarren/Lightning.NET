@@ -52,6 +52,7 @@ namespace LightningDB
         /// </summary>
         public LightningVersionInfo Version => LightningVersionInfo.Get();
 
+        /// <summary>
         /// Set the size of the memory map to use for this environment.
         /// The size should be a multiple of the OS page size. 
         /// The default is 10485760 bytes. 
@@ -60,6 +61,7 @@ namespace LightningDB
         /// This function may only be called before the environment is opened. 
         /// The size may be changed by closing and reopening the environment. 
         /// Any attempt to set a size smaller than the space already consumed by the environment will be silently changed to the current size of the used space.
+        /// </summary>
         public long MapSize
         {
             get { return _config.MapSize; }
