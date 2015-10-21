@@ -34,15 +34,21 @@ namespace LightningDB.Tryout
 
         private static void DoTestImpl(LightningEnvironment env, bool useRandomKeys = false)
         {
-            //var numItemsToWrite = 10 * 1000 * 1000;
-            var numItemsToWrite = 1 * 1000 * 1000;
+            var numItemsToWrite = 1 * 1000; // One thousand
+            //var numItemsToWrite = 10 * 1000; // Ten thousand
+            //var numItemsToWrite = 100 * 1000; // One hundred thousand
+            //var numItemsToWrite = 1 * 1000 * 1000; // 1 million
+            //var numItemsToWrite = 10 * 1000 * 1000; // 10 million
             var randon = new Random(1773);
-            var randomKey = new byte[10];
+            var randomKey = new byte[sizeof(int)];
             Console.WriteLine("Using {0} keys", useRandomKeys ? "RANDOM" : "SEQUENTIAL");
 
             var writeTimer = Stopwatch.StartNew();
+            // Need to specify DatabaseOpenFlags.IntegerKey if we want the items to be sorted, not entirely sure why though,
+            // probably big/little endian related, see http://www.openldap.org/lists/openldap-bugs/201308/msg00050.html
+            var dbConfig = new DatabaseConfiguration { Flags = DatabaseOpenFlags.Create | DatabaseOpenFlags.IntegerKey };
             using (var tx = env.BeginTransaction())
-            using (var db = tx.OpenDatabase("test", new DatabaseConfiguration { Flags = DatabaseOpenFlags.Create }))
+            using (var db = tx.OpenDatabase("test", dbConfig))
             {
                 for (var i = 0; i < numItemsToWrite; ++i)
                 {
